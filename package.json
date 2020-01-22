@@ -8,7 +8,7 @@
     "start": "nodemon index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "John Fruscella",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
