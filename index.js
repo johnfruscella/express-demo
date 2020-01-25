@@ -1,3 +1,4 @@
+const Joi = require('joi'); //Joi is a class and, using Pascal naming convention, is Capitalized
 const express = require('express');
 const app = express();
 
@@ -20,8 +21,17 @@ app.get('/api/courses', (req, res) => {
 });
 
 app.post('/api/courses', (req, res) => {
+    const schema = {
+        name: Joi.string().min(3).required()
+    };
+
+    const result = Joi.validate(req.body, schema);
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
     const course = {
-        id: courese.length + 1,
+        id: courses.length + 1,
         name: req.body.name
     };
     courses.push(course);
@@ -33,14 +43,7 @@ app.get('/api/courses/:id', (req, res) => {
     if (!course) res.status(404).send(`Error 404: The course can not be found`);
     res.send(course);
 });
-app.post('/api/courses', (req, res) => {
-    const course = {
-        id: courses.length + 1,
-        name: req.body.name
-    };
-    courses.push(course);
-    res.send(course);
-})
+
 
 //Port 
 const port = process.env.PORT || 3000;
