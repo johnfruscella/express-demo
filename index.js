@@ -1,9 +1,13 @@
 const Joi = require('@hapi/joi'); //Joi is a class and, using Pascal naming convention, is Capitalized
+const logger = require('./logger');
+const authenticator = require('./authenticator');
 const express = require('express');
 const app = express();
 
 app.use(express.json());
 
+app.use(logger);
+app.use(authenticator);
  function validateCourse(course) {
     const schema = Joi.object({
         name: Joi.string() 
