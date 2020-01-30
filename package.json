@@ -11,8 +11,8 @@
   "author": "John Fruscella",
   "license": "ISC",
   "dependencies": {
+    "@hapi/joi": "^17.1.0",
     "express": "^4.17.1",
-    "joi": "^14.3.1",
     "nodemon": "^2.0.2"
   }
 }

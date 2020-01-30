@@ -1,16 +1,20 @@
-const Joi = require('joi'); //Joi is a class and, using Pascal naming convention, is Capitalized
+const Joi = require('@hapi/joi'); //Joi is a class and, using Pascal naming convention, is Capitalized
 const express = require('express');
 const app = express();
 
 app.use(express.json());
 
-function validateCourse(course) {
-    const schema = {
-        name: Joi.string().min(3).required()
-    };
+ function validateCourse(course) {
+    const schema = Joi.object({
+        name: Joi.string() 
+          .min(3)
+          .required()
+      });
+      return schema.validate({name: "course"}); 
+     //return Joi.validate(course, schema);
+ }
 
-    return Joi.validate(course, schema);
-}
+
 
 const courses = [
     { id: 1, name: 'course1' },
@@ -34,6 +38,8 @@ app.get('/api/courses/:id', (req, res) => {
     res.send(course);
 });
 
+  
+  
 app.post('/api/courses', (req, res) => {
     const { error } = validateCourse(req.body); //like result.error
     if (error) return res.status(400).send(error.details[0].message);
