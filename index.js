@@ -1,3 +1,5 @@
+const debug = require('debug')('app:startup');
+const config = require('config');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const Joi = require('@hapi/joi'); //Joi is a class and, using Pascal naming convention, is Capitalized
@@ -6,30 +8,39 @@ const authenticator = require('./authenticator');
 const express = require('express');
 const app = express();
 
-// console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-// console.log(`app: ${app.get('env')}`);
+// console.log(`NODE_ENV: ${process.env.NODE_ENV}`); When using this, process.env.NODE_ENV is set to undefined by default
+// console.log(`app: ${app.get('env')}`);  app.get('env') showing environment variable with is set to development by default
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true})); //key=value&key=value
+app.use(express.urlencoded({ extended: true })); //key=value&key=value
 app.use(express.static('public'));
 app.use(helmet());
 
-if (app.get('env') === 'development'){
-app.use(morgan('tiny'));
-console.log('Morgan enabled...');
+// Configuration
+// console.log('Application Name ' + config.get('name'));
+// console.log('Mail Server ' + config.get('mail.host'));
+// console.log('Mail Password ' + config.get('mail.password')); //Checkout 0507 for info on this
+
+
+//app.get('env') showing environment variable with is set to development by default
+// can change environment variable in command line using export(for linux and mac) or set.for example export NODE_ENV=production , staging or develpoment
+if (app.get('env') === 'development') {
+    app.use(morgan('tiny'));
+    debug('Morgan enabled...'); //will see this debugging info when you change DEBUG environment variable (export DEBUG=app:startup) won't see if (export DEBUG= )
 };
+
 
 app.use(logger);
 app.use(authenticator);
- function validateCourse(course) {
+function validateCourse(course) {
     const schema = Joi.object({
-        name: Joi.string() 
-          .min(3)
-          .required()
-      });
-      return schema.validate({name: "course"}); 
-     //return Joi.validate(course, schema);
- }
+        name: Joi.string()
+            .min(3)
+            .required()
+    });
+    return schema.validate({ name: "course" });
+    //return Joi.validate(course, schema);
+}
 
 
 
@@ -55,8 +66,8 @@ app.get('/api/courses/:id', (req, res) => {
     res.send(course);
 });
 
-  
-  
+
+
 app.post('/api/courses', (req, res) => {
     const { error } = validateCourse(req.body); //like result.error
     if (error) return res.status(400).send(error.details[0].message);
