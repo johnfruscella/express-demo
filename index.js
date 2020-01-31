@@ -1,12 +1,23 @@
+const morgan = require('morgan');
+const helmet = require('helmet');
 const Joi = require('@hapi/joi'); //Joi is a class and, using Pascal naming convention, is Capitalized
 const logger = require('./logger');
 const authenticator = require('./authenticator');
 const express = require('express');
 const app = express();
 
+// console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+// console.log(`app: ${app.get('env')}`);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true})); //key=value&key=value
 app.use(express.static('public'));
+app.use(helmet());
+
+if (app.get('env') === 'development'){
+app.use(morgan('tiny'));
+console.log('Morgan enabled...');
+};
 
 app.use(logger);
 app.use(authenticator);
